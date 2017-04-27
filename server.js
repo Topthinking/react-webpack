@@ -27,6 +27,21 @@ module.exports = {
 				test: /\.(js|jsx)$/,
 				exclude:/node_modules/,
 				loader:'react-hot-loader!babel-loader'
+			},
+			{
+				test: /\.less$/,
+				exclude:/node_modules/,
+				loader:'style-loader!css-loader!less-loader'
+			},
+			{
+				test: /\.(jpg|png|gif)$/,
+				exclude:/node_modules/,
+				loader:'url-loader'
+			},
+			{
+				test: /\.json$/,
+				exclude:/node_modules/,
+				loader:'json-loader'
 			}
 		]
 	},
