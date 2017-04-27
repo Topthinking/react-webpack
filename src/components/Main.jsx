@@ -24,25 +24,62 @@ imageDatas = (function getImageURL(data){
 
 class AppComponent extends React.Component {
   //0
-  constructor(){
-  	super();
+  constructor(props){
+  	super(props);
   	this.state={
-  		fontSize:'12px',
-  		color:'red'
+  		imgsArrangeArr:[
+        /*{
+          pos:{
+            left:'0',
+            top:'0'
+          }
+        }*/
+      ]
   	}
+
+    this.Constant={
+      centerPos:{
+        left:0,
+        right:0
+      },
+      hPosRange:{
+        leftSecX:[0,0],
+        rightSecX:[0,0],
+        y:[0,0]
+      },
+      vPosRange:{
+        x:[0,0],
+        topY:[0,0]
+      }
+    }
   }
+
+  //重新布局所有图片
+  rearrange(centerIndex){
+
+  }
+  
 
   //2
   render() {
     var controllerUinits = [],
         imgFigures = [];
 
-    imageDatas.forEach(function(value){
-      imgFigures.push(<ImgFigure data={value}/>);
-    });
+    imageDatas.forEach(function(value,index){
+      if(!this.state.imgsArrangeArr[index]){
+        this.state.imgsArrangeArr[index] = {
+          pos:{
+            left:0,
+            top:0
+          }
+        }
+      }
+      imgFigures.push(<ImgFigure data={value} ref={'imgFigure'+index}/>);
+
+    }.bind(this));
 
     return (
-          <section className="stage">
+          <section className="stage" ref="stage">
               <section className="img-sec">
                 {imgFigures}
               </section>
@@ -57,9 +94,42 @@ class AppComponent extends React.Component {
   componentWillMount(){
   }
 
-  //3
+  //3 组件加载后，为每张图片计算其位置范围
   componentDidMount(){
-  	
+
+    //首先拿到舞台的大小
+  	var stageDOM = ReactDOM.findDOMNode(this.refs.stage),
+        stageW = stageDOM.scrollWidth,
+        stageH = stageDOM.scrollHeight,
+        halfStageW = Math.ceil(stageW / 2),
+        halfStageH = Math.ceil(stageH / 2);
+
+    //拿到一个图片的大小
+    var imgFigureDOM = ReactDOM.findDOMNode(this.refs.imgFigure0),
+        imgW = imgFigureDOM.scrollWidth,
+        imgH = imgFigureDOM.scrollHeight,
+        halfImgW = Math.ceil(imgW / 2),
+        halfImgH = Math.ceil(imgH / 2);
+
+
+    this.Constant.centerPos = {
+      left:halfStageW - halfImgW,
+      top:halfStageH - halfImgH
+    }
+
+    this.Constant.hPosRange.leftSecX[0] = -halfImgW;
+    this.Constant.hPosRange.leftSecX[1] = halfStageW - halfImgW*3;
+    this.Constant.hPosRange.rightSecX[0] = halfStageW - halfImgW;
+    this.Constant.hPosRange.rightSecX[1] = stageW - halfImgW;
+    this.Constant.hPosRange.y[0] = -halfImgH;
+    this.Constant.hPosRange.y[1] = stageH - halfImgH;
+
+    this.Constant.vPosRange.topY[0] = -halfImgH;
+    this.Constant.vPosRange.topY[1] = halfStageH - halfImgH*3;
+    this.Constant.vPosRange.x[0] = halfImgW - imgW;
+    this.Constant.vPosRange.x[1] = halfImgW;
+
+    this.rearrange(0);
   }
 }
 
