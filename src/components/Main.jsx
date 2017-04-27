@@ -97,7 +97,7 @@ class AppComponent extends React.Component {
         vPosRangeX = vPosRange.x,
 
         imgsArrangeTopArr = [],
-        topImgNum = Math.ceil(Math.random() * 2), //取一个或者不取
+        topImgNum = Math.floor(Math.random() * 2), //取一个或者不取
 
         topImgSpliceIndex = 0,
 
@@ -190,6 +190,8 @@ class AppComponent extends React.Component {
         }
       }
       imgFigures.push(<ImgFigure key={index} data={value} ref={'imgFigure'+index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>);
+
+      controllerUinits.push(<ControllerUnit key={index}  arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>);
 
     }.bind(this));
 
@@ -329,7 +331,9 @@ class ImgFigure extends React.Component{
     //如果图片的旋转角度有值不为0 添加
 
     if(this.props.arrange.rotate){
-      styleObj['transform'] = 'rotate('+this.props.arrange.rotate+'deg)';
+      (['MozT','msT','OT','WebkitT','t']).forEach(
+        (value,index)=>styleObj[value+'ransform'] = 'rotate('+this.props.arrange.rotate+'deg)'
+      );
     }
 
     if(this.props.arrange.isCenter){
@@ -354,6 +358,37 @@ class ImgFigure extends React.Component{
           </figcaption>
         </figure>
       )
+  }
+}
+
+//控制组件
+class ControllerUnit extends React.Component{
+  handleClick(e){
+
+    if(this.props.arrange.isCenter){
+      this.props.inverse();
+    }else{
+      this.props.center();
+    }
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  render(){
+    var controllerUnitClassName = "controller-unit";
+
+    //如果是居中
+
+    if(this.props.arrange.isCenter){
+      controllerUnitClassName += " is-center";
+
+      if(this.props.arrange.isInverse){
+        controllerUnitClassName += " is-inverse";
+      }
+    }
+
+    return (
+        <span className={controllerUnitClassName} onClick={::this.handleClick}></span>
+      );
   }
 }
 

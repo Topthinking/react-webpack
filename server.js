@@ -34,7 +34,7 @@ module.exports = {
 				loader:'style-loader!css-loader!less-loader'
 			},
 			{
-				test: /\.(jpg|png|gif)$/,
+				test: /\.(jpg|png|gif|svg|woff|ttf|eot)$/,
 				exclude:/node_modules/,
 				loader:'url-loader'
 			},
